@@ -56,10 +56,11 @@ class Login:
     def __init__(self):
         self.option = Options()
         self.option.add_argument('blink-settings=imagesEnabled=true')  # 不加载图片, 提升速度，但无法显示二维码
-        self.option.add_argument('--headless')
-        self.option.add_argument('--disable-extensions')
-        self.option.add_argument('--disable-gpu')
-        self.option.add_argument('--no-sandbox')
+        if input('请初始化设置\n1.无界面\n0.有界面\n请输入数字(1/0):') == 1:
+            self.option.add_argument('--headless')
+            self.option.add_argument('--disable-extensions')
+            self.option.add_argument('--disable-gpu')
+            self.option.add_argument('--no-sandbox')
 
         self.option.add_argument('--mute-audio')  # 关闭声音
         self.option.add_argument('--window-size=1024,768')
@@ -70,17 +71,22 @@ class Login:
 
     def showQRcode(self):
         i = 0
+        us = input('请输入您的账号')
+        pa = input('请输入您的密码')
+
+
         print("正在打开登陆界面,请稍后")
+
 
         self.driver.get('https://passport.zhihuishu.com/login')
         WebDriverWait(self.driver, 30, 0.2).until(
                     lambda driver: driver.find_element_by_class_name("wall-sub-btn"))
         usernm = self.driver.find_element_by_id('lUsername')
         usernm.clear()
-        usernm.send_keys('13554337909')
+        usernm.send_keys(us)
         passwd = self.driver.find_element_by_id('lPassword')
         passwd.clear()
-        passwd.send_keys('Csk20000204')
+        passwd.send_keys(pa)
         btn = self.driver.find_element_by_class_name('wall-sub-btn')
         btn.click()
         WebDriverWait(self.driver, 270).until(title_of_login())
