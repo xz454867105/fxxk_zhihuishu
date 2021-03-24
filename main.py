@@ -56,7 +56,7 @@ class Login:
     def __init__(self):
         self.option = Options()
         self.option.add_argument('blink-settings=imagesEnabled=true')  # 不加载图片, 提升速度，但无法显示二维码
-        if input('请初始化设置\n1.无界面\n0.有界面\n请输入数字(1/0):') == 1:
+        if int(input('请初始化设置\n1.无界面\n0.有界面\n请输入数字(1/0):')) == 1:
             self.option.add_argument('--headless')
             self.option.add_argument('--disable-extensions')
             self.option.add_argument('--disable-gpu')
@@ -208,6 +208,31 @@ class Login:
                     break
 
 
+    def doJudge(self,quiz,driver):
+        choices = driver.find_elements_by_css_selector('svg.topic-option')
+        print('开始尝试所有可能')
+        if driver.find_elements_by_css_selector('span.right'):
+            print('找到答案')
+            driver.find_element_by_css_selector('div.btn').click()
+            print('关闭题目')
+            time.sleep(0.5)
+            try:
+                driver.find_elements_by_css_selector('button.el-button--primary')[5].click()
+                time.sleep(0.5)
+                driver.find_element_by_css_selector('i.iconguanbi').click()
+            except:
+                pass
+        else:
+            for choice in choices:
+                choice.click()
+                time.sleep(1)
+                if driver.find_elements_by_css_selector('span.right'):
+                    print('找到答案')
+                    driver.find_element_by_css_selector('div.btn').click()
+                    print('关闭题目')
+                    print('继续学习')
+                    break
+
     def watchVideo(self,subchapter,driver):
         first = 1
         time.sleep(5)
@@ -258,6 +283,9 @@ class Login:
                     elif '单选题' in quizformat:
                         print('识别为单选题')
                         self.doSingle(quiz,driver)
+                    elif '判断题' in quizformat:
+                        print('识别为判断题')
+                        self.doJudge(quiz,driver)
                     if first == 1:
                         subchapter.find_element_by_css_selector('span.catalogue_title').click()
                         first = 0
