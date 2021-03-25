@@ -265,18 +265,22 @@ class Login:
             subchapter.find_element_by_css_selector('span.catalogue_title').click()
         except:
             print('出现异常，正在检查')
-
+        fail = 0
+        lastState = '0:00'
         while True:
+            # 查找 弹框 元素 存在
             if driver.find_elements_by_css_selector('div.el-dialog'):
                 quiz = driver.find_element_by_css_selector('div.el-dialog')
                 test = 0
                 try:
                     quizformat = driver.find_element_by_css_selector('span.title-tit').text
                     print('出现随机题目')
+                    # 确认 弹窗 为 题目
                     test = 1
                 except:
                     pass
                 if test == 1:
+                    # 判断题目类型
                     if '多选题' in quizformat:
                         print('识别为多选题')
                         self.doMulti(quiz,driver)
@@ -289,9 +293,23 @@ class Login:
                     if first == 1:
                         subchapter.find_element_by_css_selector('span.catalogue_title').click()
                         first = 0
+            # 判断任务进度
+            currentState = subchapter.find_element_by_css_selector('span.progress-num').text
+            if lastState == currentState:
+                fail += 1
+            lastState = currentState
+            # 六次进度没有增长
+            if fail >= 6:
+                print('检测到进度未变化，正在检查播放按钮')
+                self.driver.find_element_by_css_selector('div#playButton').click()
+                print('重试成功')
+                fail = 0
+            # 判断任务完成
             try:
                 subchapter.find_element_by_css_selector('b.time_icofinish')
                 print('第{}节 {} 已完成'.format(subchapterId, subchapterName))
+                fail = 0
+                lastState = '0:00'
                 break
             except:
                 pass
