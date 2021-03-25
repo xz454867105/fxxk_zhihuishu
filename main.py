@@ -294,10 +294,13 @@ class Login:
                         subchapter.find_element_by_css_selector('span.catalogue_title').click()
                         first = 0
             # 判断任务进度
-            currentState = subchapter.find_element_by_css_selector('span.progress-num').text
-            if lastState == currentState:
-                fail += 1
-            lastState = currentState
+            try:        # 存在完成任务后没有进度的情况
+                currentState = subchapter.find_element_by_css_selector('span.progress-num').text
+                if lastState == currentState:
+                    fail += 1
+                lastState = currentState
+            except:
+                pass
             # 六次进度没有增长
             if fail >= 6:
                 print('检测到进度未变化，正在检查播放按钮')
