@@ -54,7 +54,9 @@ class title_of_login:
 
 
 class Login:
-    def __init__(self):
+    def __init__(self,us,pa):
+        self.us = us
+        self.pa = pa
         self.option = Options()
         self.option.add_argument('blink-settings=imagesEnabled=true')  # 不加载图片, 提升速度，但无法显示二维码
         if int(input('请初始化设置\n1.无界面\n0.有界面\n请输入数字(1/0):')) == 1:
@@ -69,12 +71,9 @@ class Login:
         # self.debug = DebugBrowser()
         # self.driver = webdriver.Chrome(options=self.debug.debug_chrome())
         self.driver = webdriver.Chrome(chrome_options=self.option)
-
+        self.showQRcode()
     def showQRcode(self):
         i = 0
-        us = input('请输入您的账号')
-        pa = input('请输入您的密码')
-
 
         print("正在打开登陆界面,请稍后")
 
@@ -84,10 +83,10 @@ class Login:
                     lambda driver: driver.find_element_by_class_name("wall-sub-btn"))
         usernm = self.driver.find_element_by_id('lUsername')
         usernm.clear()
-        usernm.send_keys(us)
+        usernm.send_keys(self.us)
         passwd = self.driver.find_element_by_id('lPassword')
         passwd.clear()
-        passwd.send_keys(pa)
+        passwd.send_keys(self.pa)
         btn = self.driver.find_element_by_class_name('wall-sub-btn')
         btn.click()
         WebDriverWait(self.driver, 270).until(title_of_login())
@@ -385,5 +384,17 @@ class Login:
 
 
 if __name__ == '__main__':
-    lo = Login()
-    lo.showQRcode()
+    us = input('请输入您的账号')
+    pa = input('请输入您的密码')
+    failed = 0
+    tt = int(time.time()*1000)
+    try:
+        lo = Login(us,pa)
+    except:
+        failed += 1
+        ta = int(time.time() * 1000)
+        gap = ta - tt
+        if failed >= 3 and gap <= 60:
+            print('重试多次有误，请检查网络')
+        else:
+            lo = Login(us,pa)
