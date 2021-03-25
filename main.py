@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common import exceptions
 from itertools import combinations, permutations
 
+
 # class DebugBrowser:
 #     def __init__(self):
 #         self.ip = '127.0.0.1'
@@ -304,7 +305,7 @@ class Login:
             # 六次进度没有增长
             if fail >= 6:
                 print('检测到进度未变化，正在检查播放按钮')
-                self.driver.find_element_by_css_selector('div#playButton').click()
+                subchapter.find_element_by_css_selector('span.catalogue_title').click()
                 print('重试成功')
                 fail = 0
             # 判断任务完成
