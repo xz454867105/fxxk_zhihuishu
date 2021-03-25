@@ -152,11 +152,11 @@ class Login:
     def doMulti(self,quiz,driver):
         choices = driver.find_elements_by_css_selector('svg.topic-option')
         choicesNum = len(choices)
-        print('开始尝试所有可能')
+        # print('开始尝试所有可能')
         if driver.find_elements_by_css_selector('span.right'):
-            print('找到答案')
+            # print('找到答案')
             driver.find_element_by_css_selector('div.btn').click()
-            print('关闭题目')
+            print('完成题目')
             time.sleep(0.5)
             try:
                 driver.find_elements_by_css_selector('button.el-button--primary')[5].click()
@@ -175,9 +175,9 @@ class Login:
                         p.click()
                     time.sleep(1)
                     if driver.find_elements_by_css_selector('span.right'):
-                        print('找到答案')
+                        # print('找到答案')
                         driver.find_element_by_css_selector('div.btn').click()
-                        print('关闭题目')
+                        print('完成题目')
                         break
                     else:
                         for p in possible:
@@ -185,11 +185,11 @@ class Login:
 
     def doSingle(self,quiz,driver):
         choices = driver.find_elements_by_css_selector('svg.topic-option')
-        print('开始尝试所有可能')
+        # print('开始尝试所有可能')
         if driver.find_elements_by_css_selector('span.right'):
-            print('找到答案')
+            # print('找到答案')
             driver.find_element_by_css_selector('div.btn').click()
-            print('关闭题目')
+            print('完成题目')
             time.sleep(0.5)
             try:
                 driver.find_elements_by_css_selector('button.el-button--primary')[5].click()
@@ -202,20 +202,19 @@ class Login:
                 choice.click()
                 time.sleep(1)
                 if driver.find_elements_by_css_selector('span.right'):
-                    print('找到答案')
+                    # print('找到答案')
                     driver.find_element_by_css_selector('div.btn').click()
-                    print('关闭题目')
-                    print('继续学习')
+                    print('完成题目')
+                    # print('继续学习')
                     break
-
 
     def doJudge(self,quiz,driver):
         choices = driver.find_elements_by_css_selector('svg.topic-option')
         print('开始尝试所有可能')
         if driver.find_elements_by_css_selector('span.right'):
-            print('找到答案')
+            # print('找到答案')
             driver.find_element_by_css_selector('div.btn').click()
-            print('关闭题目')
+            print('完成题目')
             time.sleep(0.5)
             try:
                 driver.find_elements_by_css_selector('button.el-button--primary')[5].click()
@@ -228,16 +227,16 @@ class Login:
                 choice.click()
                 time.sleep(1)
                 if driver.find_elements_by_css_selector('span.right'):
-                    print('找到答案')
+                    # print('找到答案')
                     driver.find_element_by_css_selector('div.btn').click()
-                    print('关闭题目')
-                    print('继续学习')
+                    print('完成题目')
+                    # print('继续学习')
                     break
 
     def watchVideo(self,subchapter,driver):
         first = 1
         time.sleep(5)
-        print('看视频')
+        print('开始看视频')
         time.sleep(1)
         try:
             driver.find_elements_by_css_selector('button.el-button--primary')[5].click()
@@ -275,7 +274,7 @@ class Login:
                 test = 0
                 try:
                     quizformat = driver.find_element_by_css_selector('span.title-tit').text
-                    print('出现随机题目')
+                    print('出现题目')
                     # 确认 弹窗 为 题目
                     test = 1
                 except:
@@ -283,13 +282,13 @@ class Login:
                 if test == 1:
                     # 判断题目类型
                     if '多选题' in quizformat:
-                        print('识别为多选题')
+                        # print('识别为多选题')
                         self.doMulti(quiz,driver)
                     elif '单选题' in quizformat:
-                        print('识别为单选题')
+                        # print('识别为单选题')
                         self.doSingle(quiz,driver)
                     elif '判断题' in quizformat:
-                        print('识别为判断题')
+                        # print('识别为判断题')
                         self.doJudge(quiz,driver)
                     if first == 1:
                         subchapter.find_element_by_css_selector('span.catalogue_title').click()
@@ -297,13 +296,14 @@ class Login:
             # 判断任务进度
             try:        # 存在完成任务后没有进度的情况
                 currentState = subchapter.find_element_by_css_selector('span.progress-num').text
+                print('当前进度{}'.format(currentState))
                 if lastState == currentState:
                     fail += 1
                 lastState = currentState
             except:
                 pass
             # 六次进度没有增长
-            if fail >= 6:
+            if fail >= 3:
                 print('检测到进度未变化，正在检查播放按钮')
                 subchapter.find_element_by_css_selector('span.catalogue_title').click()
                 print('重试成功')
@@ -317,7 +317,7 @@ class Login:
                 break
             except:
                 pass
-            time.sleep(5)
+            time.sleep(20)
 
 
     def findCourse(self):
